@@ -2,19 +2,20 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include "FrameSequence.h"
 
 int main(int argc, char *argv[]){
-	std::ofstream output{"output.pgm",std::ios::binary};
+	std::vector<PKNNIV001::FrameSequence> videos;
+	//std::ofstream output{"output.pgm",std::ios::binary};
 	if(argc == 1){
 		std::cerr << "ARGUEMENTS ARE MISSING"<< std::endl;
 		return 1;
 	}
 
 	//reading in command line arguements----------------------------
-	int x1,y1,x2,y2,fw,fh;
+	int x1,y1,x2,y2,fw,fh =0;
 	std::string infile = argv[1];
-	std::ifstream file{infile, std::ios::binary};
-	std::string outname, operation;
+	
 	for(size_t i=0; i<argc;++i){
 		//std::cout << argv[i] << std::endl;
 		}
@@ -32,69 +33,54 @@ int main(int argc, char *argv[]){
 			fh = std::atoi(argv[i+2]);
 		}
 		else if(s == "-w"){
-			outname = argv[i+1];
-			operation = argv[i+2];
+
+			PKNNIV001::FrameSequence *q =  new PKNNIV001::FrameSequence();
+			q->operation = argv[i+1];
+			q->oname = argv[i+2];
+			videos.push_back(*q);
+			delete q;
 		}
 		else if(s == "-p"){
 			//read in all points
 		}		
 	}//---------------------------------------------------------------
-
-	std::string line;
-	std::string size;
-	std::stringstream header;
 	
+	std::string line{""};
+	std::string size{""};
+	std::stringstream header{line};
+	std::ifstream file{infile, std::ios::binary};
 	
 	//reading through header-----------
 	while(true){
 		std::getline(file,line);
-		std::cout << line << std::endl;
-		//output << line << std::endl;
 		header << line << std::endl;
 		if(line == "255"){
 			break;
 		}
-		
 		 size= line;
-		 std::cout << line;
 	}
-	output << header.str() << std::endl;
+	//output << header.str() << std::endl;
 	std::stringstream ssize{size};
 	ssize >> size;
 	int width{std::stoi(size)};
 	ssize >> size;
 	int height{std::stoi(size)};
-	std::cout << "width" << width << std::endl;
-	std::cout << "heightis" << height <<  std::endl;
 
 	//--------
-	char **l = new char*[height];
-	char **f = new char*[height];
-	//std::stringstream ss;
 	
-
-	//reading in file-----------
-	file.seekg(0,file.end);
-	std::streampos h{header.str().length()};
-	std::streampos si = file.tellg()-h;
-
-    char *memblock = new char [si];
-    file.seekg(int(header.str().length())+1, std::ios::beg);
-    file.read (memblock, si);
-	//output.write(memblock, si);
-    file.close();
 	
-	//--------------------------
-	for(size_t r = 0; r<height;++r){
-		for(size_t c=0; c<width;++c){
-			output.write(&memblock[(r*width)+c],1);
-		}
-		
+	//reading in block to memory-----------
+	PKNNIV001::readfile(file,header.str());
+	file.close();
+	//create blocks in frame
+	for(auto g:videos){
+		//for p just iterate over list of co ordinates
+		g.extract(x1,y1,x2,y2,fw,fh, width,height);
+		g.printToFiles(fw, fh);
 	}
+    
 	std::cout << "END" << std::endl;
 
-
-	
-	output.close();
+	//output.close();
 	return 0;
 }

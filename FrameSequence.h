@@ -6,14 +6,22 @@
 
 namespace PKNNIV001{
 
+	static char * mem;
+	static void setmem(int size){mem = new char[size];};
+	static char * getmem(){return mem;};
+	void readfile(std::ifstream &file, std::string header);
+
 	class FrameSequence{
 	
 	public:
-		std::vector<unsigned char **> imageSequence;
+		std::vector<char **> imageSequence;
+		std::string oname, operation;
+		
 		FrameSequence(void);
 		~FrameSequence();
-	
-	
+		void extract(int sx, int sy, int ex, int ey, int fw, int fh, int width, int height);
+		void readfile(std::ifstream file, std::string header);
+		void printToFiles(int width, int height );
 	
 	};
 
