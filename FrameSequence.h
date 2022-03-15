@@ -9,6 +9,7 @@ namespace PKNNIV001{
 	class FrameSequence{
 	
 	public:
+		std::vector<unsigned char **> imageSequence;
 		FrameSequence(void);
 		~FrameSequence();
 	
