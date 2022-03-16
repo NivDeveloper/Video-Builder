@@ -1,4 +1,4 @@
-MAINPROG=extractor.exe
+MAINPROG=extractor
 
 SOURCES:=$(wildcard *.cpp)
 OBJECTS=$(SOURCES:.cpp=.o)
