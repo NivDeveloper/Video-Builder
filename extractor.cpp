@@ -34,11 +34,11 @@ int main(int argc, char *argv[]){
 		}
 		else if(s == "-w"){
 
-			PKNNIV001::FrameSequence *q =  new PKNNIV001::FrameSequence();
-			q->operation = argv[i+1];
-			q->oname = argv[i+2];
-			videos.push_back(*q);
-			delete q;
+			PKNNIV001::FrameSequence q =  PKNNIV001::FrameSequence();
+			q.operation = argv[i+1];
+			q.oname = argv[i+2];
+			videos.push_back(q);
+			
 		}
 		else if(s == "-p"){
 			//read in all points
@@ -77,10 +77,12 @@ int main(int argc, char *argv[]){
 		//for p just iterate over list of co ordinates
 		g.extract(x1,y1,x2,y2,fw,fh, width,height);
 		g.printToFiles(fw, fh);
+		system("rm videos/*");
+		system("ffmpeg -framerate 20 -pattern_type glob -i 'images/*.pgm' -c:v libx264 -r 30 videos/output.mp4");
 	}
     
 	std::cout << "END" << std::endl;
-
+	delete [] PKNNIV001::mem;
 	//output.close();
 	return 0;
 }
