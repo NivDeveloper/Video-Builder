@@ -60,7 +60,7 @@ namespace PKNNIV001{
         
         while(fx!=ex || fy!=ey){
 
-            
+            writeFrame(fh,fw,fx,fy,width, height);
             int tempx= 0;
             int tempy= 0;
             //loop over all surrounding blocks
@@ -87,20 +87,22 @@ namespace PKNNIV001{
 
                     if(dist<framedist){
                         //calc gradient diff
-                        if((ex-sx) ==0 || (ex-(fx+x))==0){
-                            tempx = x;
-                            
+                        if((ex-sx) ==0 ){
+                            tempx = 0;
                             tempy = y;
                             
                             
+                        }else if((ex-(fx+x))==0){
+                            tempx = x;
+                            tempy = y;
                         }
                         else{
                             double currgdiff = std::abs(
                                 (float(ey-(fy+y))/(ex-(fx+x)))
                                 -(float(ey-sy)/(ex-sx)));
 
-                            if(currgdiff<running || 
-                                (((fy+y)==ey)&&((fx+x)==ex))){
+                            if(currgdiff<running) 
+                                {//(((fy+y)==ey)&&((fx+x)==ex)))
                               
                                 running = currgdiff;
                                 tempx = x;
@@ -115,7 +117,7 @@ namespace PKNNIV001{
             }
             fx += tempx;
             fy += tempy;
-            writeFrame(fh,fw,fx,fy,width, height);
+            
         }
         
     }
