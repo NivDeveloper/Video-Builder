@@ -31,12 +31,17 @@ int main(int argc, char *argv[]){
 		else if(s == "-s"){
 			fw = std::atoi(argv[i+1]);
 			fh = std::atoi(argv[i+2]);
+			if(fw==0 || fh == 0){
+				std::cerr << "PLEASE INPUT A VALID FRAME SIZE" << std::endl;
+				return 1;
+			}
 		}
 		else if(s == "-w"){
 
 			PKNNIV001::FrameSequence q =  PKNNIV001::FrameSequence();
 			q.operation = argv[i+1];
 			q.oname = argv[i+2];
+			//std::cout << q.oname << std::endl;
 			videos.push_back(q);
 			
 		}
@@ -72,17 +77,18 @@ int main(int argc, char *argv[]){
 	//reading in block to memory-----------
 	PKNNIV001::readfile(file,header.str());
 	file.close();
+	system("rm videos/*");
+	system("rm images/*");
 	//create blocks in frame
 	for(auto g:videos){
 		//for p just iterate over list of co ordinates
 		g.extract(x1,y1,x2,y2,fw,fh, width,height);
 		g.printToFiles(fw, fh);
-		system("rm videos/*");
-		system("ffmpeg -framerate 20 -pattern_type glob -i 'images/*.pgm' -c:v libx264 -r 30 videos/output.mp4");
+		
+		std::string out ="ffmpeg -framerate 20 -pattern_type glob -i 'images/"+g.oname+"*.pgm' -c:v libx264 -r 30 videos/"+g.oname+".mp4";
+		//system(out.c_str());
 	}
-    
-	std::cout << "END" << std::endl;
-	delete [] PKNNIV001::mem;
-	//output.close();
+    delete PKNNIV001::mem;
+	
 	return 0;
 }

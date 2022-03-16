@@ -19,9 +19,11 @@ namespace PKNNIV001{
 		
 		FrameSequence(void);
 		~FrameSequence();
+
 		void extract(int sx, int sy, int ex, int ey, int fw, int fh, int width, int height);
 		void readfile(std::ifstream file, std::string header);
 		void printToFiles(int width, int height );
+		void writeFrame(int fh, int fw, int fx, int fy, int width, int height);
 	
 	};
 
